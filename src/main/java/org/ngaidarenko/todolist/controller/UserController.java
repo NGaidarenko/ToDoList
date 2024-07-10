@@ -7,12 +7,13 @@ import org.ngaidarenko.todolist.request.UserRequest;
 import org.ngaidarenko.todolist.service.service.TaskService;
 import org.ngaidarenko.todolist.service.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping(name = "/users")
 public class UserController {
     @Autowired
     private UserService userService;
@@ -26,23 +27,26 @@ public class UserController {
     }
 
     @GetMapping("/{userId}")
-    public User getUserById(@PathVariable int userId) {
-        return userService.getUserById(userId);
+    public ResponseEntity<User> getUserById(@PathVariable int userId) {
+        return new ResponseEntity<>(userService.getUserById(userId), HttpStatus.OK);
+//        return userService.getUserById(userId);
     }
 
 
     @PostMapping("/addUser")
-    public void createUser(@RequestBody UserRequest userRequest){
+    public ResponseEntity<Void> createUser(@RequestBody UserRequest userRequest){
         User user = new User();
         user.setName(userRequest.getName());
         user.setPassword(userRequest.getPassword());
 
         userService.createUser(user);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @DeleteMapping("/delete/{userId}")
-    public void deleteUser(@PathVariable int userId) {
+    public ResponseEntity<Void> deleteUser(@PathVariable int userId) {
         userService.deleteUser(userId);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping("/{userId}/tasks")
